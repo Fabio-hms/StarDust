@@ -1,0 +1,34 @@
+Tonkens utilizados:
+1) Identificadores
+
+L = Alfabeto de A a Z com letras maiúsculas e minúsculas ({{a,b,…,z,A,B,…,Z}})
+D = Números Decimais 
+Caractere "_"
+(L∪{_})⋅(L∪D∪{_})∗
+
+2) Literais
+
+Inteiros = D+
+Decimais = D+⋅"."⋅D+
+
+3)Operadores
+Caracteres Aritméticos e Lógicos
+Ex: {+,−,∗,/,=,==,≤,≥,!=,and, or…}
+
+4) Palavras-chave
+L = Alfabeto de A a Z com letras maiúsculas e minúsculas
+ ex: {"if","else","while","return",…}	
+
+5) Delimitadores
+
+Ex: {(,),{,},;,[,],,}
+
+
+Exemplos:
+int x1 = 10;
+
+if (x1 == 10) {
+    print(x1 + 3.1415);
+} else {
+ print("O valor não é 10");
+}
