@@ -51,6 +51,27 @@ LINE_COMMENT → //.*
 
 
 Erros
-
 INVALID → .
 
+2. Análise de ambiguidades e regras de resolução
+
+Identificadores x Palavras-chave: mesma forma, mas prioridade é para palavras-chave.
+Números decimais x ponto (.): regex de FLOAT deve vir antes de DOT para evitar interpretar .5 como DOT + INT.
+Operadores simples x compostos: operadores compostos (==, !=, <=, >=) devem ser reconhecidos antes dos simples (=, <, >).
+Comentários x operador /: se // ou /* → comentário, senão / é operador de divisão.
+Palavras-chave lógicas (and, or, not): uso de \b para não confundir com identificadores como android.
+
+3. Estratégia para tratamento de erros léxicos
+
+Caractere inválido: reconhecer como INVALID, emitir erro e consumir apenas 1 caractere.
+Literal numérico mal formado: exemplo 123. → reportar erro e consumir até fim do lexema.
+String não terminada: reportar erro e avançar até aspas de fechamento ou fim da linha.
+Comentário não fechado: reportar erro ao chegar no EOF.
+Recuperação: erros não interrompem análise, apenas geram token de erro (ERROR_*) e continuam o processamento.
+
+4. Primeiros esboços de mensagens de erro para usuários
+
+Erro léxico: caractere inválido '@' na linha X, coluna Y.
+Erro léxico: número mal formado '123.' em linha X, coluna Y. Esperado dígito após ponto.
+Erro léxico: string não terminada iniciada na linha X, coluna Y.
+Erro léxico: comentário não terminado iniciado na linha X, coluna Y.
