@@ -1,0 +1,63 @@
+
+
+Caractere inválido (não pertence ao alfabeto da linguagem)
+Erro léxico: caractere inválido '@' na linha 3, coluna 7.
+Esperado: letra, número, '_', operador ou delimitador válido.
+Sugestão: remova ou substitua o caractere por um símbolo válido.
+
+Token mal formado: número com caractere inválido
+Erro léxico: número mal formado '12a34' na linha 10, coluna 15.
+Esperado: dígitos numéricos, ponto decimal ou expoente.
+Sugestão: verifique se o número está correto e remova caracteres inválidos.
+
+Token mal formado: string não fechada
+Erro léxico: string não fechada iniciada na linha 5, coluna 8.
+Esperado: aspas simples ou duplas para fechar a string.
+Sugestão: adicione a aspa de fechamento correspondente para finalizar a string.
+
+Identificador com caractere inválido
+Erro léxico: identificador contém caractere inválido '#' na linha 7, coluna 12.
+Esperado: letras, números ou '_' no identificador.
+Sugestão: remova o caractere inválido ou use um identificador válido.
+
+Mensagens de Erro Léxico
+
+Caractere inválido
+Erro léxico na linha 3, coluna 7: caractere '@' não permitido. Esperado letra, número, '_' ou operador.
+
+Número mal formado
+Erro léxico na linha 10, coluna 15: número inválido '12a34'. Verifique se o número está correto.
+
+String não fechada
+Erro léxico na linha 5, coluna 8: string iniciada com aspas simples não foi fechada. Adicione a aspa de fechamento.
+
+Identificador inválido
+Erro léxico na linha 7, coluna 12: identificador contém caractere inválido '#'. Use apenas letras, números ou '_' no identificador.
+
+Mensagens de Erro Sintático
+
+Símbolo inesperado
+Erro sintático na linha 7, coluna 15: símbolo '}' inesperado. Esperado ';' ou operador.
+
+Bloco incompleto
+Erro sintático na linha 12, coluna 5: bloco não fechado. Esperado 'end' para finalizar o bloco.
+
+Faltando operador ou separador
+Erro sintático na linha 15, coluna 20: esperado operador '+' ou separador ';' após a expressão.
+
+Expressão inválida
+Erro sintático na linha 9, coluna 10: expressão inválida. Verifique a sintaxe.
+
+Mensagens de Erro Semântico
+
+Variável não declarada
+Erro semântico na linha 20, coluna 10: variável 'x' usada antes de ser declarada.
+
+Tipo incompatível em atribuição
+Erro semântico na linha 25, coluna 8: tipo incompatível na atribuição. Esperado inteiro, recebido string.
+
+Função não definida
+Erro semântico na linha 30, coluna 5: função 'foo' não foi declarada.
+
+Uso incorreto de operador
+Erro semântico na linha 18, coluna 14: operador '+' não pode ser aplicado a tipos string e inteiro.
