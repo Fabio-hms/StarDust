@@ -1,77 +1,102 @@
-1. Especificação completa usando expressões regulares
+dentificadores = {[a-z_][a-zA-Z0-9_]*}
+Literais :
+Numero Inteiro = {[+-]?\d+}
+Numero Decimal = {[+-]?(\d+\.\*|\.\d+)([eE][+-]?\d+)?}
+String = {'([^'\\]|zz.)*'}
+String Double = {"([^"\\]|zz.)*"}
 
-Identificadores
+Operadores:
+Operador de Igualdade : "=="
+Operador de Diferente de : "!="
+Operador de Maior ou igual que : ">="
+Operador de Menor ou igual que : "<="
+Operador de Maior que: ">"
+Operador de Menor que: "<"
+Operador de Atribuição : "="
+Operador de Adição : "+"
+Operador de Subtração : "-"
+Operador de Multiplicação : "*"
+Operador de Divisão : "/"
+Operador de Números inteiros da Divisão : "//"
+Operador de Resto da Divisão : "%"
 
-IDENT    → [a-zA-Z_][a-zA-Z0-9_]*
+Delimitadores:
+Delimitador InícioParenteses : "("
+Delimitador FimParenteses : ")"
+Delimitador InícioChaves : "{"
+Delimitador FimChaves : "}"
+Delimitador Linha : ";"
 
+Comentarios:
 
-Literais
+Comentario Linha : "\\"
+Comentario InicioBloco : "/*"
+Comentario FimBLoco : "*/"
 
-INT      → [0-9]+
-FLOAT    → [0-9]+\.[0-9]+
-
-
-Operadores
-
-PLUS     → \+
-MINUS    → -
-MULT     → \*
-DIV      → /
-ASSIGN   → =
-EQ       → ==
-LE       → <=
-GE       → >=
-NE       → !=
-AND      → \band\b
-OR       → \bor\b
-NOT      → \bnot\b
-
-
-Palavras-chave
-
-KEYWORD  → \b(?:if|else|while|return|int|float|print)\b
-
-
-Delimitadores
-
-LPAREN    → \(
-RPAREN    → \)
-LBRACE    → \{
-RBRACE    → \}
-LBRACKET  → \[
-RBRACKET  → \]
-SEMICOLON → ;
-COMMA     → ,
+Palavras-chave:
+{if, else, elsif, for, while, return, def, true, false, and,or,null,function}
 
 
-Espaços em branco e comentários
-
-WHITESPACE   → [ \t\r\n]+
-LINE_COMMENT → //.*
 
 
-Erros
-INVALID → .
+Caractere inválido (não pertence ao alfabeto da linguagem)
+Erro léxico: caractere inválido '@' na linha 3, coluna 7.
+Esperado: letra, número, '_', operador ou delimitador válido.
+Sugestão: remova ou substitua o caractere por um símbolo válido.
 
-2. Análise de ambiguidades e regras de resolução
+Token mal formado: número com caractere inválido
+Erro léxico: número mal formado '12a34' na linha 10, coluna 15.
+Esperado: dígitos numéricos, ponto decimal ou expoente.
+Sugestão: verifique se o número está correto e remova caracteres inválidos.
 
-Identificadores x Palavras-chave: mesma forma, mas prioridade é para palavras-chave.
-Números decimais x ponto (.): regex de FLOAT deve vir antes de DOT para evitar interpretar .5 como DOT + INT.
-Operadores simples x compostos: operadores compostos (==, !=, <=, >=) devem ser reconhecidos antes dos simples (=, <, >).
-Comentários x operador /: se // ou /* → comentário, senão / é operador de divisão.
-Palavras-chave lógicas (and, or, not): uso de \b para não confundir com identificadores como android.
+Token mal formado: string não fechada
+Erro léxico: string não fechada iniciada na linha 5, coluna 8.
+Esperado: aspas simples ou duplas para fechar a string.
+Sugestão: adicione a aspa de fechamento correspondente para finalizar a string.
 
-3. Estratégia para tratamento de erros léxicos
+Identificador com caractere inválido
+Erro léxico: identificador contém caractere inválido '#' na linha 7, coluna 12.
+Esperado: letras, números ou '_' no identificador.
+Sugestão: remova o caractere inválido ou use um identificador válido.
 
-Caractere inválido: reconhecer como INVALID, emitir erro e consumir apenas 1 caractere.
-Literal numérico mal formado: exemplo 123. → reportar erro e consumir até fim do lexema.
-String não terminada: reportar erro e avançar até aspas de fechamento ou fim da linha.
-Comentário não fechado: reportar erro ao chegar no EOF.
-Recuperação: erros não interrompem análise, apenas geram token de erro (ERROR_*) e continuam o processamento.
+Mensagens de Erro Léxico
 
-4. Primeiros esboços de mensagens de erro para usuários
+Caractere inválido
+Erro léxico na linha 3, coluna 7: caractere '@' não permitido. Esperado letra, número, '_' ou operador.
 
-Erro léxico: caractere inválido '@' na linha X, coluna Y.
-Erro léxico: número mal formado '123.' em linha X, coluna Y. Esperado dígito após ponto.
-Erro léxico: string não terminada iniciada na linha X, coluna Y.
-Erro léxico: comentário não terminado iniciado na linha X, coluna Y.
+Número mal formado
+Erro léxico na linha 10, coluna 15: número inválido '12a34'. Verifique se o número está correto.
+
+String não fechada
+Erro léxico na linha 5, coluna 8: string iniciada com aspas simples não foi fechada. Adicione a aspa de fechamento.
+
+Identificador inválido
+Erro léxico na linha 7, coluna 12: identificador contém caractere inválido '#'. Use apenas letras, números ou '_' no identificador.
+
+Mensagens de Erro Sintático
+
+Símbolo inesperado
+Erro sintático na linha 7, coluna 15: símbolo '}' inesperado. Esperado ';' ou operador.
+
+Bloco incompleto
+Erro sintático na linha 12, coluna 5: bloco não fechado. Esperado 'end' para finalizar o bloco.
+
+Faltando operador ou separador
+Erro sintático na linha 15, coluna 20: esperado operador '+' ou separador ';' após a expressão.
+
+Expressão inválida
+Erro sintático na linha 9, coluna 10: expressão inválida. Verifique a sintaxe.
+
+Mensagens de Erro Semântico
+
+Variável não declarada
+Erro semântico na linha 20, coluna 10: variável 'x' usada antes de ser declarada.
+
+Tipo incompatível em atribuição
+Erro semântico na linha 25, coluna 8: tipo incompatível na atribuição. Esperado inteiro, recebido string.
+
+Função não definida
+Erro semântico na linha 30, coluna 5: função 'foo' não foi declarada.
+
+Uso incorreto de operador
+Erro semântico na linha 18, coluna 14: operador '+' não pode ser aplicado a tipos string e inteiro.
