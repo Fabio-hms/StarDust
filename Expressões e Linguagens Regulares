@@ -1,4 +1,4 @@
-dentificadores = {[a-z_][a-zA-Z0-9_]*}
+Identificadores = {[a-z_][a-zA-Z0-9_]*}
 Literais :
 Numero Inteiro = {[+-]?\d+}
 Numero Decimal = {[+-]?(\d+\.\*|\.\d+)([eE][+-]?\d+)?}
