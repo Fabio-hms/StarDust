@@ -1,0 +1,49 @@
+
+# Analisador Léxico
+
+Este é o analisador léxico do projeto de compiladores.
+
+## Requisitos
+- Python 3.8 ou superior
+
+## Como executar
+
+1. Clone o repositório e acesse a pasta `lexer`:
+   ```bash
+   git clone <url-do-repo>
+   cd lexer
+
+Rode o analisador léxico passando o arquivo de código fonte:
+
+python lexer.py caminho/do/arquivo.fonte
+
+Se não for passado nenhum arquivo, ele executa o teste interno definido em __main__.
+
+Saída: tabela com duas colunas (Token e Tipo) ou erro com linha e coluna caso algum token não seja reconhecido.
+
+Exemplo
+python lexer.py exemplo.txt
+
+
+Saída:
+
+Token(KW_IF, 'if', linha=1, coluna=5)
+...
+
+Estrutura
+
+lexer.py : código-fonte do analisador.
+
+README.md : este guia.
+
+
+---
+
+Com isso você já tem:
+
+* **Tabela de tokens** gerada para o exemplo.
+* **README.md** pronto.
+* Basta fazer o commit:  
+  ```bash
+  git add lexer/lexer.py lexer/README.md
+  git commit -m "Entrega parcial: analisador léxico funcionando"
