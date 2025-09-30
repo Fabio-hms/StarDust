@@ -38,11 +38,7 @@ README.md : este guia.
 
 ---
 
-Com isso você já tem:
 
-* **Tabela de tokens** gerada para o exemplo.
-* **README.md** pronto.
-* Basta fazer o commit:  
   ```bash
   git add lexer/lexer.py lexer/README.md
   git commit -m "Entrega parcial: analisador léxico funcionando"
