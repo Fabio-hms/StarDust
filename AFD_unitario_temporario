@@ -1,0 +1,74 @@
+A1 — Identificador (corrigido)
+
+De	Símbolo	Para
+A1_q0	[a-zA-Z_]	A1_q1
+A1_q1	[a-zA-Z0-9_]	A1_q1
+Finais: A1_q1		
+
+A2 — Inteiro
+
+De	Símbolo	Para
+A2_q0	[+-]	A2_q1
+A2_q0	[0-9]	A2_q2
+A2_q1	[0-9]	A2_q2
+A2_q2	[0-9]	A2_q2
+Finais: A2_q2		
+
+A3 — Float / Científico (corrigido)
+
+De	Símbolo	Para
+A3_q0	[+-]	A3_q1
+A3_q0	[0-9]	A3_q2
+A3_q0	.	A3_q3
+A3_q1	[0-9]	A3_q2
+A3_q1	.	A3_q3
+A3_q2	[0-9]	A3_q2
+A3_q2	.	A3_q4
+A3_q4	(nenhum ou [0-9] ou [eE])	final / A3_q5 / A3_q6
+A3_q4	[0-9]	A3_q5
+A3_q4	[eE]	A3_q6
+A3_q3	[0-9]	A3_q5
+A3_q5	[0-9]	A3_q5
+A3_q5	[eE]	A3_q6
+A3_q6	[+-]	A3_q7
+A3_q6	[0-9]	A3_q8
+A3_q7	[0-9]	A3_q8
+A3_q8	[0-9]	A3_q8
+Finais: A3_q4, A3_q5, A3_q8		
+
+Observação importante: A3_q4 é final (aceita números como 1.). Também é possível transitar de A3_q4 para expoente (aceita 1.e10).
+
+A4 — String com apóstrofos ('...')
+
+De	Símbolo / Condição	Para
+A4_q0	'	A4_q1
+A4_q1	caractere ≠ ' e ≠ \	A4_q1
+A4_q1	\	A4_q2
+A4_q2	qualquer	A4_q1
+A4_q1	'	A4_qf
+Finais: A4_qf		
+
+A5 — String com aspas duplas ("...") — mesma lógica que A4.
+
+A6 / A7 — Operadores, parênteses e comentários
+
+== modelado: A6_q0 --'='--> A6_q1 --'='--> A6_q2 (final)
+
+Single = modelado como autômato separado (A_assign) — para longest-match o lexer deve escolher == sobre = quando possível.
+
+// (comentário de linha) modelado: q -- '/' --> q1 -- '/' --> q2 e q2 loop com qualquer ≠ EOL até EOL -> final.
+
+/* ... */ (bloco) modelado com /* início e */ término, conforme seu diagrama original.
+
+Outros operadores (!=, >=, <=, +, -, *, /, //, %) expostos como sub-autômatos.
+
+
+//Diagrama textual
+
+S --ε--> A1_q0    (identificador)       [A1_q0 --[a-zA-Z_]--> A1_q1; A1_q1 --[a-zA-Z0-9_]--> A1_q1; final=A1_q1]
+S --ε--> A2_q0    (inteiro)             [A2_q0 --[+-]--> A2_q1; A2_q0 --[0-9]--> A2_q2; final=A2_q2]
+S --ε--> A3_q0    (float/científico)    [A3_q0..A3_q8, finais A3_q4,A3_q5,A3_q8 — corrigido q4 final e q4->[eE]->q6]
+S --ε--> A4_q0    (string '...')        [escapes com '\' tratados, final=A4_qf]
+S --ε--> A5_q0    (string "...")        [escapes com '\' tratados, final=A5_qf]
+S --ε--> A6_q0    (operadores '==', '!=', '>=', '<=', etc.)
+S --ε--> A7_q0    (pontuação e comentários: '(', ')', '{', '}', ';', '/*...*/', '//' line comment)
