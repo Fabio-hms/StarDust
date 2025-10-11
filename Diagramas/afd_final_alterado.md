@@ -92,3 +92,14 @@ stateDiagram-v2
     qsb3 --> qsb2: Σ - *
     qsb3 --> qsbf: /
     qsbf --> [*]: Fim
+
+
+
+
+
+CONFIG
+
+{
+  "theme": "default",
+  "layout": "elk"
+}
