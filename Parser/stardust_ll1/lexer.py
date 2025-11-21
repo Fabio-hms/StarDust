@@ -1,3 +1,4 @@
+# lexer.py
 import re
 from dataclasses import dataclass
 from typing import List
@@ -16,64 +17,79 @@ KEYWORDS = {
     "and", "or"
 }
 
-token_specification = [
-    ("FLOAT", r'\d+\.\d+'),
-    ("INT", r'\d+'),
-
-    ("IDENT", r'[A-Za-z_][A-Za-z0-9_]*'),
-
-    ("EQEQ", r'=='),
-    ("NE", r'!='),
-    ("LE", r'<='),
-    ("GE", r'>='),
-    ("DOUBLE_SLASH", r'//'),
-
-    ("ASSIGN", r'='),
-    ("LT", r'<'),
-    ("GT", r'>'),
-    ("PLUS", r'\+'),
-    ("MINUS", r'-'),
-    ("STAR", r'\*'),
-    ("SLASH", r'/'),
-    ("PERCENT", r'%'),
-
-    ("LPAREN", r'\('),
-    ("RPAREN", r'\)'),
-    ("LBRACE", r'\{'),
-    ("RBRACE", r'\}'),
-    ("COMMA", r','),
-    ("SEMICOLON", r';'),
-
-    ("SKIP", r'[ \t\r]+'),
-    ("NEWLINE", r'\n'),
-    ("COMMENT", r'//[^\n]*'),
+TOKEN_SPECIFICATION = [
+    ("NUMBER",       r"\d+(\.\d+)?"),
+    ("STRING",       r"\".*?\""),
+    ("IDENT",        r"[A-Za-z_][A-Za-z0-9_]*"),
+    ("LPAREN",       r"\("),
+    ("RPAREN",       r"\)"),
+    ("LBRACE",       r"\{"),
+    ("RBRACE",       r"\}"),
+    ("COMMA",        r","),
+    ("SEMICOLON",    r";"),
+    ("PLUS",         r"\+"),
+    ("MINUS",        r"-"),
+    ("MULT",         r"\*"),
+    ("DIV",          r"/"),
+    ("EQ",           r"=="),
+    ("ASSIGN",       r"="),
+    ("LT",           r"<"),
+    ("GT",           r">"),
+    ("LE",           r"<="),
+    ("GE",           r">="),
+    ("NE",           r"!="),
+    ("AND",          r"and"),
+    ("OR",           r"or"),
+    ("SKIP",         r"[ \t\r]+"),
+    ("NEWLINE",      r"\n"),
+    ("MISMATCH",     r"."), 
 ]
 
-tok_regex = '|'.join(f"(?P<{name}>{regex})" for name, regex in token_specification)
-master_pat = re.compile(tok_regex)
+TOKEN_REGEX = "|".join(
+    f"(?P<{name}>{pattern})" for name, pattern in TOKEN_SPECIFICATION
+)
 
-def tokenize(code: str) -> List[Token]:
+master_pat = re.compile(TOKEN_REGEX)
+
+def tokenize(text: str) -> List[Token]:
     tokens = []
     line = 1
-    line_start = 0
+    column = 1
 
-    for mo in master_pat.finditer(code):
+    for mo in master_pat.finditer(text):
         kind = mo.lastgroup
-        text = mo.group()
-        column = mo.start() - line_start + 1
+        value = mo.group()
 
-        if kind == "NEWLINE":
+        if kind == "NUMBER":
+            if "." in value:
+                tok_type = "FLOAT"
+            else:
+                tok_type = "INT"
+
+        elif kind == "IDENT":
+            tok_type = value if value in KEYWORDS else "IDENT"
+
+        elif kind == "STRING":
+            tok_type = "STRING"
+
+        elif kind == "SKIP":
+            column += len(value)
+            continue
+
+        elif kind == "NEWLINE":
             line += 1
-            line_start = mo.end()
+            column = 1
             continue
 
-        if kind in ("SKIP", "COMMENT"):
-            continue
+        elif kind == "MISMATCH":
+            raise RuntimeError(f"Caractere inesperado {value!r} na linha {line}")
 
-        if kind == "IDENT" and text in KEYWORDS:
-            kind = text
+        else:
+            # símbolos e operadores viram o próprio nome de token (LPAREN, RPAREN, PLUS, etc)
+            tok_type = kind
 
-        tokens.append(Token(kind, text, line, column))
+        tokens.append(Token(tok_type, value, line, column))
+        column += len(value)
 
     tokens.append(Token("EOF", "", line, column))
     return tokens
