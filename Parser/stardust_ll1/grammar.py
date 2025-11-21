@@ -1,27 +1,21 @@
-# stardust_ll1/grammar.py
+# grammar.py
 import json
 from typing import Dict, List, Set, Tuple
 
 def make_grammar():
-    """
-    Grammar LL(1) corrigida com suporte a operadores relacionais no nível correto.
-    """
+
     G = {
-        # Program
         "Program": [["FunctionDeclList"]],
 
-        # Functions
         "FunctionDeclList": [["FunctionDecl", "FunctionDeclList"], []],
         "FunctionDecl": [["function", "IDENT", "(", "ParameterListOpt", ")", "Block"]],
         "ParameterListOpt": [["ParameterList"], []],
         "ParameterList": [["IDENT", "ParameterListTail"]],
         "ParameterListTail": [[",", "IDENT", "ParameterListTail"], []],
 
-        # Block / statements
         "Block": [["{", "StatementList", "}"]],
         "StatementList": [["Statement", "StatementList"], []],
 
-        # Statement (IDENT factored to avoid LL(1) conflict)
         "Statement": [
             ["IDENT", "StatementPrime"],
             ["if", "(", "Expression", ")", "Block", "ElsifPart", "ElsePart"],
@@ -31,6 +25,7 @@ def make_grammar():
             ["{", "StatementList", "}"],
             [";"]
         ],
+
         "StatementPrime": [
             ["=", "Expression", ";"],
             ["ExpressionRest", ";"]
@@ -40,24 +35,18 @@ def make_grammar():
         "ElsePart": [["else", "Block"], []],
         "ExpressionOpt": [["Expression"], []],
 
-        # ---------- Expressions with precedence ----------
-        # Expression -> AddExpr [ RelationalOperator AddExpr ]
         "Expression": [["AddExpr", "ExpressionRel"]],
 
-        # optional relational tail (only one comparison; simplifies LL(1) table)
         "ExpressionRel": [["RelationalOperator", "AddExpr"], []],
 
-        # AddExpr handles +, -, and logical 'and'/'or' at this level
         "AddExpr": [["TermExpression", "AddExprPrime"]],
         "AddExprPrime": [["AdditiveOperator", "TermExpression", "AddExprPrime"], []],
         "AdditiveOperator": [["+"], ["-"], ["and"], ["or"]],
 
-        # TermExpression and its tail
         "TermExpression": [["FactorExpression", "TermTail"]],
         "TermTail": [["MultiplicativeOperator", "FactorExpression", "TermTail"], []],
         "MultiplicativeOperator": [["*"], ["/"], ["//"], ["%"]],
 
-        # Factor
         "FactorExpression": [
             ["IDENT"],
             ["NumberLiteral"],
@@ -72,13 +61,13 @@ def make_grammar():
         "NumberLiteral": [["INT"], ["FLOAT"]],
         "StringLiteral": [["STRING"]],
 
-        # Relational operators
         "RelationalOperator": [["=="], ["!="], [">"], [">="], ["<"], ["<="]],
     }
+
     return G
 
 
-# ---------- FIRST / FOLLOW / helpers (unchanged logic) ----------
+# ---------- FIRST / FOLLOW  ----------
 
 def compute_first(G: Dict[str, List[List[str]]]) -> Dict[str, Set[str]]:
     FIRST = {A: set() for A in G}
@@ -100,17 +89,24 @@ def compute_first(G: Dict[str, List[List[str]]]) -> Dict[str, Set[str]]:
                         break
                     else:
                         before = len(FIRST[A])
+                        # add FIRST[X] \ {ε} to FIRST[A]
                         FIRST[A].update(x for x in FIRST[X] if x != "ε")
+                        # if FIRST[X] contains ε, continue to next symbol; mark changed if new items added
                         if "ε" in FIRST[X]:
+                            if len(FIRST[A]) != before:
+                                changed = True
                             continue
-                        break
+                        # otherwise stop considering this production
                         if len(FIRST[A]) != before:
                             changed = True
+                        break
                 else:
+                    # all symbols in prod derive ε
                     if "ε" not in FIRST[A]:
                         FIRST[A].add("ε")
                         changed = True
     return FIRST
+
 
 def first_of_string(beta: List[str], G, FIRST) -> Set[str]:
     res = set()
@@ -127,6 +123,7 @@ def first_of_string(beta: List[str], G, FIRST) -> Set[str]:
         return res
     res.add("ε")
     return res
+
 
 def compute_follow(G, FIRST, start="Program"):
     FOLLOW = {A: set() for A in G}
@@ -148,6 +145,7 @@ def compute_follow(G, FIRST, start="Program"):
                             changed = True
     return FOLLOW
 
+
 def build_parsing_table(G, FIRST, FOLLOW):
     table = {}
     for A in G:
@@ -166,7 +164,7 @@ def build_parsing_table(G, FIRST, FOLLOW):
                     table[key] = prod
     return table
 
-# optional utility to dump generated sets/table
+
 def generate(filename="stardust_ll1/ll1_table.json"):
     G = make_grammar()
     FIRST = compute_first(G)
