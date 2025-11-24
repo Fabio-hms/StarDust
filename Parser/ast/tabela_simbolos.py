@@ -1,4 +1,3 @@
-# tabela_simbolos.py
 from typing import Optional, Dict, List, Any
 from dataclasses import dataclass
 
