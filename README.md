@@ -28,25 +28,32 @@ Este repositório implementa um pipeline funcional e serve como base para estudo
 
 ### 1. Entre na pasta do projeto:
 cd "C:StarDust"
+
 2. Crie o ambiente virtual:
 py -3.12 -m venv venv
-3. Ative o ambiente:
+
+4. Ative o ambiente:
 .\venv\Scripts\activate
-4. Instale o llvmlite:
+
+6. Instale o llvmlite:
 pip install llvmlite
 Se falhar, instale manualmente:
 pip install llvmlite-*-cp312-win_amd64.whl
+
 🧪 Como Rodar Cada Etapa do Compilador
 ⚠️ Execute sempre a partir da raiz do projeto.
 
 🔹 1. Analisador Léxico
 python Lexer/main.py
+
 🔹 2. Analisador Sintático LL(1) (OFICIAL)
 ⚠️ Nunca execute o arquivo diretamente.
 Use o módulo:
 python -m Parser.stardust_ll1.main
+
 🔹 3. AST Legada (Opcional)
 python Parser/ast/main.py
+
 🔹 4. Gerador de Código LLVM IR (CodeGen)
 ⚠️ O codegen contém imports relativos — não execute assim:
 python codegen/main.py   # ❌ INCORRETO
