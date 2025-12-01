@@ -1,4 +1,3 @@
-# grammar.py
 import json
 from typing import Dict, List, Set, Tuple
 
