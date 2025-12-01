@@ -1,4 +1,3 @@
-# generate_ll1.py
 from .grammar import generate
 
 if __name__ == "__main__":
