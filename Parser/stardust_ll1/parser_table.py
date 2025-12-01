@@ -1,7 +1,6 @@
-# parser_table.py
 from typing import List, Tuple, Any
-from stardust_ll1.grammar import make_grammar, compute_first, compute_follow, build_parsing_table
-from stardust_ll1.lexer import Token
+from .grammar import make_grammar, compute_first, compute_follow, build_parsing_table
+from .lexer import Token
 
 class ParseError(Exception):
     pass
