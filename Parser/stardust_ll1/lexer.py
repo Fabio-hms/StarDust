@@ -1,4 +1,3 @@
-# lexer.py
 import re
 from dataclasses import dataclass
 from typing import List
@@ -85,7 +84,6 @@ def tokenize(text: str) -> List[Token]:
             raise RuntimeError(f"Caractere inesperado {value!r} na linha {line}")
 
         else:
-            # símbolos e operadores viram o próprio nome de token (LPAREN, RPAREN, PLUS, etc)
             tok_type = kind
 
         tokens.append(Token(tok_type, value, line, column))
