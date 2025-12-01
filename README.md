@@ -1,90 +1,106 @@
-Um compilador educacional da linguagem StarDust, contendo:
+# 🌌 StarDust — Compilador Educacional
 
-Analisador Léxico (Lexer)
+O **StarDust** é um compilador educacional completo escrito em Python, projetado para demonstrar todas as etapas essenciais do processo de compilação:
 
-Analisador Sintático LL(1)
+- 🔤 **Analisador Léxico (Lexer)**
+- 📘 **Analisador Sintático LL(1)**
+- 🌳 **Geração da Árvore Sintática (AST)**
+- 🧠 **Analisador Semântico**
+- ⚙️ **Gerador de Código LLVM IR**
 
-Geração de Árvore Sintática (AST)
+Este repositório implementa um pipeline funcional e serve como base para estudos de compiladores, linguagens formais e teoria de parsing.
 
-Analisador Semântico
+---
 
-Gerador de Código LLVM IR
+# 🔧 Requisitos
 
-Este repositório demonstra um pipeline completo de compilador, totalmente implementado em Python.
+| Componente | Versão Recomendada |
+|-----------|---------------------|
+| **Python** | 3.12.x |
+| **LLVM** (opcional) | `clang` + `llc` para gerar executáveis |
+| **llvmlite** | Compatível com Python 3.12 |
 
-🔧 Requisitos
-Componente	Versão Recomendada
-Python	3.12.x
-LLVM (opc.)	clang + llc para gerar executáveis
-llvmlite	compatível com Python 3.12
+⚠️ **Python 3.13 e 3.14 não são suportados**, pois o `llvmlite` ainda não oferece compatibilidade completa.
 
-⚠️ Python 3.13 e 3.14 NÃO devem ser usados (llvmlite não suporta).
+---
 
-🚀 Instalação
-🟦 Windows
-1. Navegue até a pasta do projeto:
+# 🚀 Instalação (Windows)
+
+### 1. Entre na pasta do projeto:
+```powershell
 cd "C:\Users\pedro\Downloads\StarDust_fixed"
-
 2. Crie o ambiente virtual:
+powershell
+Copiar código
 py -3.12 -m venv venv
-
-3. Ative:
+3. Ative o ambiente:
+powershell
+Copiar código
 .\venv\Scripts\activate
-
 4. Instale o llvmlite:
+powershell
+Copiar código
 pip install llvmlite
+Se falhar, instale manualmente:
 
-
+powershell
+Copiar código
+pip install llvmlite-*-cp312-win_amd64.whl
 🧪 Como Rodar Cada Etapa do Compilador
-
-Todas as execuções devem ser feitas na raiz do projeto.
+⚠️ Execute sempre a partir da raiz do projeto.
 
 🔹 1. Analisador Léxico
+powershell
+Copiar código
 python Lexer/main.py
+🔹 2. Analisador Sintático LL(1) (OFICIAL)
+⚠️ Nunca execute o arquivo diretamente.
+Use o módulo:
 
-🔹 2. Parser LL(1) — (OFICIAL)
-
-⚠️ Deve ser executado como módulo, nunca como arquivo.
-
+powershell
+Copiar código
 python -m Parser.stardust_ll1.main
-
-🔹 3. AST Legada (opcional)
+🔹 3. AST Legada (Opcional)
+powershell
+Copiar código
 python Parser/ast/main.py
+🔹 4. Gerador de Código LLVM IR (CodeGen)
+⚠️ O codegen contém imports relativos — não execute assim:
 
-🔹 4. CodeGen
+powershell
+Copiar código
+python codegen/main.py   # ❌ INCORRETO
+Execute corretamente como módulo:
 
-O codegen usa imports relativos — então NÃO execute:
-
-python codegen/main.py   # ERRADO
-
-
-Execute assim:
-
+powershell
+Copiar código
 python -m codegen.main
-
-🧵 Gerar LLVM IR em arquivo
+🧵 Gerar um Arquivo LLVM IR
+powershell
+Copiar código
 python -m codegen.main > saida.ll
+⚙️ Gerar Executável (Opcional)
+Requer llc + clang.
 
-⚙️ Gerar Executável (opcional)
-
-Requer llc e clang instalados.
-
+1. Gerar objeto:
+powershell
+Copiar código
 llc saida.ll -filetype=obj -o saida.obj
+2. Lincar:
+powershell
+Copiar código
 clang saida.obj -o saida.exe
-
-
-Executar:
-
+3. Executar:
+powershell
+Copiar código
 .\saida.exe
-
 🗂 Diagramas
+O diagrama AFD da linguagem StarDust está em:
 
-Diagrama do AFD está em:
-
+bash
+Copiar código
 diagramas/afd_final.md
-
 🧠 Sobre o Projeto
-
 Este compilador implementa:
 
 Autômato Finito Determinístico (AFD)
@@ -93,15 +109,11 @@ Tabela LL(1)
 
 Parse Tree
 
-AST simples
+AST Simplificada
 
 Analisador Semântico
 
 Geração de IR com llvmlite
 
-Ideal para estudos de linguagens e compiladores.
-
-
-Se falhar, instale via wheel:
-
-pip install llvmlite-*-cp312-win_amd64.whl
+📘 Ideal para estudos de:
+Compiladores, teoria de linguagens, sintaxe formal, análise semântica e geração de código.
