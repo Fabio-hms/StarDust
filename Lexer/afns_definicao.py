@@ -1,164 +1,97 @@
-from lexer.afn_to_afd import AFN
+from afn_to_afd import AFN
 
-# ===============================
-# IDENTIFICADORES: [a-z_][a-zA-Z0-9_]*
-# ===============================
+digits = "0123456789"
+letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+alnum = letters + digits + "_"
+
+# IDENT
 afn_ident = AFN(
-    states=['qa0', 'qa1'],
-    alphabet=list("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"),
+    states=['q0','q1'],
+    alphabet=list(alnum),
     transitions={
-        ('qa0', '_'): {'qa1'},
-        **{('qa0', c): {'qa1'} for c in "abcdefghijklmnopqrstuvwxyz"},
-        **{('qa1', c): {'qa1'} for c in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"},
+        ('q0','_'): {'q1'},
+        **{('q0', c): {'q1'} for c in letters},
+        **{('q1', c): {'q1'} for c in alnum},
     },
-    start='qa0',
-    finals={'qa1'}
+    start='q0',
+    finals={'q1'}
 )
 
-# ===============================
-# NÚMEROS INTEIROS: [+|-]?[0-9]+
-# ===============================
+# INT
 afn_int = AFN(
-    states=['qn0', 'qn1', 'qn2'],
-    alphabet=list("0123456789+-"),
+    states=['q0','q1'],
+    alphabet=list(digits),
     transitions={
-        ('qn0', '+'): {'qn1'},
-        ('qn0', '-'): {'qn1'},
-        **{('qn0', c): {'qn2'} for c in "0123456789"},
-        **{('qn1', c): {'qn2'} for c in "0123456789"},
-        **{('qn2', c): {'qn2'} for c in "0123456789"},
+        **{('q0', c): {'q1'} for c in digits},
+        **{('q1', c): {'q1'} for c in digits},
     },
-    start='qn0',
-    finals={'qn2'}
+    start='q0',
+    finals={'q1'}
 )
 
-# ===============================
-# NÚMEROS REAIS: [+|-]?[0-9]*.[0-9]+([eE][+|-]?[0-9]+)?
-# ===============================
+# SIMPLE REAL
 afn_real = AFN(
-    states=['qo0','qo1','qo2','qo3','qo4','qo5','qo6','qo7','qo8'],
-    alphabet=list("0123456789.+-eE"),
+    states=['q0','q1','q2'],
+    alphabet=list(digits + '.'),
     transitions={
-        ('qo0', '+'): {'qo1'},
-        ('qo0', '-'): {'qo1'},
-        **{('qo0', c): {'qo2'} for c in "0123456789"},
-        **{('qo1', c): {'qo2'} for c in "0123456789"},
-        **{('qo2', c): {'qo2'} for c in "0123456789"},
-        ('qo2', '.'): {'qo4'},
-        ('qo0', '.'): {'qo3'},
-        ('qo1', '.'): {'qo3'},
-        ('qo3', c): {'qo5'} for c in "0123456789",
-        ('qo4', c): {'qo5'} for c in "0123456789",
-        **{('qo5', c): {'qo5'} for c in "0123456789"},
-        ('qo5', 'e'): {'qo6'},
-        ('qo5', 'E'): {'qo6'},
-        ('qo6', '+'): {'qo7'},
-        ('qo6', '-'): {'qo7'},
-        **{('qo6', c): {'qo8'} for c in "0123456789"},
-        **{('qo7', c): {'qo8'} for c in "0123456789"},
-        **{('qo8', c): {'qo8'} for c in "0123456789"},
+        **{('q0', c): {'q1'} for c in digits},
+        ('q1', '.'): {'q2'},
+        **{('q2', c): {'q2'} for c in digits},
     },
-    start='qo0',
-    finals={'qo5', 'qo8'}
+    start='q0',
+    finals={'q2'}
 )
 
-# ===============================
-# CHAR: 'c' ou com escape
-# ===============================
-afn_char = AFN(
-    states=['qs0', 'qs1', 'qs2', 'qsf'],
-    alphabet=[chr(i) for i in range(32,127)] + ['\\'],
-    transitions={
-        ('qs0', "'"): {'qs1'},
-        **{('qs1', c): {'qsf'} for c in [chr(i) for i in range(32,127)] if c not in ["'", "\\"]},
-        ('qs1', '\\'): {'qs2'},
-        **{('qs2', c): {'qsf'} for c in [chr(i) for i in range(32,127)]},
-        ('qsf', "'"): set(),
-    },
-    start='qs0',
-    finals={'qsf'}
-)
-
-# ===============================
-# STRING: "texto" ou com escapes
-# ===============================
+# STRING (simple)
 afn_string = AFN(
-    states=['qss0', 'qss1', 'qss2', 'qssf'],
-    alphabet=[chr(i) for i in range(32,127)] + ['\\'],
+    states=['q0','q1','q2'],
+    alphabet=[chr(i) for i in range(32,127) if chr(i) != '"'],
     transitions={
-        ('qss0', '"'): {'qss1'},
-        **{('qss1', c): {'qss1'} for c in [chr(i) for i in range(32,127)] if c not in ['"', '\\']},
-        ('qss1', '\\'): {'qss2'},
-        **{('qss2', c): {'qss1'} for c in [chr(i) for i in range(32,127)]},
-        ('qss1', '"'): {'qssf'}
+        ('q0','"'): {'q1'},
+        **{('q1', c): {'q1'} for c in [chr(i) for i in range(32,127) if chr(i) != '"']},
+        ('q1','"'): {'q2'},
     },
-    start='qss0',
-    finals={'qssf'}
+    start='q0',
+    finals={'q2'}
 )
 
-# ===============================
-# OPERADORES: + - * / % = == != >= <=
-# ===============================
-ops = ['+', '-', '*', '/', '%', '=', '==', '!=', '>=', '<=']
+# Operators (single char)
+ops = ['+', '-', '*', '/', '=', '<', '>', '!', '&', '|']
 afn_ops = AFN(
-    states=['qop0','qop1','qop2'],
-    alphabet=list("+-*/%=!><"),
-    transitions={
-        ('qop0', '+'): {'qop1'},
-        ('qop0', '-'): {'qop1'},
-        ('qop0', '*'): {'qop1'},
-        ('qop0', '/'): {'qop1'},
-        ('qop0', '%'): {'qop1'},
-        ('qop0', '='): {'qop1'},
-        ('qop0', '!'): {'qop1'},
-        ('qop0', '>'): {'qop1'},
-        ('qop0', '<'): {'qop1'},
-        ('qop1', '='): {'qop2'}
-    },
-    start='qop0',
-    finals={'qop1','qop2'}
+    states=['q0','q1'],
+    alphabet=ops,
+    transitions={('q0', c): {'q1'} for c in ops},
+    start='q0',
+    finals={'q1'}
 )
 
-# ===============================
-# PONTUAÇÃO: ( ) { } ;
-# ===============================
+# Punctuation
+puns = [';', ',', '(', ')', '{', '}', ':']
 afn_pont = AFN(
-    states=['qpt0','qpt1'],
-    alphabet=list("(){};"),
-    transitions={('qpt0', c): {'qpt1'} for c in "(){};"},
-    start='qpt0',
-    finals={'qpt1'}
+    states=['q0','q1'],
+    alphabet=puns,
+    transitions={('q0', c): {'q1'} for c in puns},
+    start='q0',
+    finals={'q1'}
 )
 
-# ===============================
-# COMENTÁRIOS:
-#   Linha: // até \n
-#   Bloco: /* ... */
-# ===============================
+# Comments: // single-line
 afn_comentario = AFN(
-    states=['qsb0','qsb1','qsb2','qsb3','qsbf'],
-    alphabet=[chr(i) for i in range(32,127)] + ['\n'],
+    states=['q0','q1','q2'],
+    alphabet=['/'] + [chr(i) for i in range(32,127) if chr(i) != '/'],
     transitions={
-        ('qsb0', '/'): {'qsb1'},
-        ('qsb1', '/'): {'qsbf'},
-        ('qsb1', '*'): {'qsb2'},
-        **{('qsb2', c): {'qsb2'} for c in [chr(i) for i in range(32,127)] if c != '*'},
-        ('qsb2', '*'): {'qsb3'},
-        ('qsb3', '*'): {'qsb3'},
-        ('qsb3', '/'): {'qsbf'}
+        ('q0','/'): {'q1'},
+        ('q1','/'): {'q2'},
+        **{('q2', c): {'q2'} for c in [chr(i) for i in range(32,127) if chr(i) != '\n']},
     },
-    start='qsb0',
-    finals={'qsbf'}
+    start='q0',
+    finals={'q2'}
 )
 
-# ===============================
-# CONJUNTO GERAL
-# ===============================
 AFNS = {
     "IDENT": afn_ident,
     "INT": afn_int,
     "REAL": afn_real,
-    "CHAR": afn_char,
     "STRING": afn_string,
     "OP": afn_ops,
     "PONT": afn_pont,
