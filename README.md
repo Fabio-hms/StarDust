@@ -27,79 +27,46 @@ Este repositório implementa um pipeline funcional e serve como base para estudo
 # 🚀 Instalação (Windows)
 
 ### 1. Entre na pasta do projeto:
-```powershell
-cd "C:\Users\pedro\Downloads\StarDust_fixed"
+cd "C:StarDust"
 2. Crie o ambiente virtual:
-powershell
-Copiar código
 py -3.12 -m venv venv
 3. Ative o ambiente:
-powershell
-Copiar código
 .\venv\Scripts\activate
 4. Instale o llvmlite:
-powershell
-Copiar código
 pip install llvmlite
 Se falhar, instale manualmente:
-
-powershell
-Copiar código
 pip install llvmlite-*-cp312-win_amd64.whl
 🧪 Como Rodar Cada Etapa do Compilador
 ⚠️ Execute sempre a partir da raiz do projeto.
 
 🔹 1. Analisador Léxico
-powershell
-Copiar código
 python Lexer/main.py
 🔹 2. Analisador Sintático LL(1) (OFICIAL)
 ⚠️ Nunca execute o arquivo diretamente.
 Use o módulo:
-
-powershell
-Copiar código
 python -m Parser.stardust_ll1.main
 🔹 3. AST Legada (Opcional)
-powershell
-Copiar código
 python Parser/ast/main.py
 🔹 4. Gerador de Código LLVM IR (CodeGen)
 ⚠️ O codegen contém imports relativos — não execute assim:
-
-powershell
-Copiar código
 python codegen/main.py   # ❌ INCORRETO
 Execute corretamente como módulo:
-
-powershell
-Copiar código
 python -m codegen.main
+
 🧵 Gerar um Arquivo LLVM IR
-powershell
-Copiar código
 python -m codegen.main > saida.ll
-⚙️ Gerar Executável (Opcional)
-Requer llc + clang.
 
 1. Gerar objeto:
-powershell
-Copiar código
 llc saida.ll -filetype=obj -o saida.obj
 2. Lincar:
-powershell
-Copiar código
 clang saida.obj -o saida.exe
 3. Executar:
-powershell
-Copiar código
 .\saida.exe
+
 🗂 Diagramas
 O diagrama AFD da linguagem StarDust está em:
-
-bash
-Copiar código
 diagramas/afd_final.md
+
 🧠 Sobre o Projeto
 Este compilador implementa:
 
