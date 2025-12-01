@@ -9,7 +9,6 @@ class GeradorCodigo:
         self._inicializar_llvm()
 
     def _inicializar_llvm(self):
-        binding.initialize()
         binding.initialize_native_target()
         binding.initialize_native_asmprinter()
 
